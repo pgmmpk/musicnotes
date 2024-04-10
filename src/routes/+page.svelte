@@ -143,21 +143,21 @@
 
 <div class="flex flex-col h-screen align-center items-center unselectable">
     <div class="flex-none flex flex-row items-center">
-        <div>
-            <span>notes:</span>
-            <input class="outline-none p-2" type="number" bind:value={num} min="3" max="8">
+        <div class="items-center w-1/8 flex-cols flex">
+            <span class="mr-4">notes: {num}</span>
+            <input class="outline-none p-1 bg-gray-200 w-48 mr-4 accent-gray-700 rounded-md border border-gray-700 appearance-none cursor-pointer" type="range" bind:value={num} min="3" max="8">
         </div>
-        <button class="flex-none m-4 disabled:text-gray-400 outline-none" onclick={repeat} disabled={score.length === 0}>
+        <button class="flex-none m-4 text-gray-700 disabled:text-gray-400 outline-none" onclick={repeat} disabled={score.length === 0}>
             <svg class="w-8 h-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m16 10 3-3m0 0-3-3m3 3H5v3m3 4-3 3m0 0 3 3m-3-3h14v-3"/>
             </svg>
         </button>
-        <button class="flex-none m-4 outline-none" onclick={play}>
+        <button class="flex-none m-4 text-gray-700 outline-none" onclick={play}>
             <svg class="w-8 h-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                 <path fill-rule="evenodd" d="M8.6 5.2A1 1 0 0 0 7 6v12a1 1 0 0 0 1.6.8l8-6a1 1 0 0 0 0-1.6l-8-6Z" clip-rule="evenodd"/>
             </svg>
         </button>
-        <button class="flex-none m-4 disabled:text-gray-400 outline-none" onclick={toggleVisible} disabled={score.length === 0}>
+        <button class="flex-none m-4 text-gray-700 disabled:text-gray-400 outline-none" onclick={toggleVisible} disabled={score.length === 0}>
             {#if visible}
             <svg class="w-8 h-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-width="2" d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6Z"/>
