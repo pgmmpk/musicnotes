@@ -79,6 +79,7 @@
             if (this.osc === null || this.vol === null) {
                 return;
             }
+            this.vol.gain.setValueAtTime(this.vol.gain. value, actx.currentTime);
             this.vol.gain.exponentialRampToValueAtTime(
                 0.0001,
                 actx.currentTime + this.stopDecay,
