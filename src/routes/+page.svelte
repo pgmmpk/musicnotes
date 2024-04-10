@@ -1,6 +1,7 @@
 <script>
     import Mousetrap from "mousetrap";
     import Key from "./Key.svelte";
+    import BlackKey from "./BlackKey.svelte";
     import { Scheduler } from './scheduler.js';
     import { Bus } from './bus.js';
     import { generate, toscore } from './generate.js';
@@ -105,27 +106,41 @@
     }
 
     // Some musical note values:
-    const A3 = new KeySound(220.00),
+    const a3 = new KeySound(207.70),
+        A3 = new KeySound(220.00),
+        b3 = new KeySound(233.10),
         B3 = new KeySound(246.94),
         C4 = new KeySound(261.63),
+        d4 = new KeySound(277.2),
         D4 = new KeySound(293.66),
+        e4 = new KeySound(311.1),
         E4 = new KeySound(329.63),
         F4 = new KeySound(349.23),
+        g4 = new KeySound(370.0),
         G4 = new KeySound(392),
+        a4 = new KeySound(415.3),
         A4 = new KeySound(440),
+        b4 = new KeySound(466.2),
         B4 = new KeySound(493.88),
         C5 = new KeySound(523.25),
         D5 = new KeySound(587.33),
         E5 = new KeySound(659.25);
 
+        bus.addEventListener('a3', what => a3.process(what));
         bus.addEventListener('A3', what => A3.process(what));
+        bus.addEventListener('b3', what => b3.process(what));
         bus.addEventListener('B3', what => B3.process(what));
         bus.addEventListener('C4', what => C4.process(what));
+        bus.addEventListener('d4', what => d4.process(what));
         bus.addEventListener('D4', what => D4.process(what));
+        bus.addEventListener('e4', what => e4.process(what));
         bus.addEventListener('E4', what => E4.process(what));
         bus.addEventListener('F4', what => F4.process(what));
+        bus.addEventListener('g4', what => g4.process(what));
         bus.addEventListener('G4', what => G4.process(what));
+        bus.addEventListener('a4', what => a4.process(what));
         bus.addEventListener('A4', what => A4.process(what));
+        bus.addEventListener('b4', what => b4.process(what));
         bus.addEventListener('B4', what => B4.process(what));
 
     let show = $state(true);
@@ -187,14 +202,21 @@
         </div>
     </div>
     <div class="w-full grow bg-gray-500 p-1 flex flex-row mousetrap" >
+        <BlackKey name="a3" {bus} {show} />
         <Key name="A3" {bus} {show} />
+        <BlackKey name="b3" {bus} {show} />
         <Key name="B3" {bus} {show} />
         <Key name="C4" {bus} {show} />
+        <BlackKey name="d4" {bus} {show} />
         <Key name="D4" {bus} {show} />
+        <BlackKey name="e4" {bus} {show} />
         <Key name="E4" {bus} {show} />
         <Key name="F4" {bus} {show} />
+        <BlackKey name="g4" {bus} {show} />
         <Key name="G4" {bus} {show} />
+        <BlackKey name="a4" {bus} {show} />
         <Key name="A4" {bus} {show} />
+        <BlackKey name="b4" {bus} {show} />
         <Key name="B4" {bus} {show} />
     </div>
 </div>
