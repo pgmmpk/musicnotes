@@ -145,12 +145,12 @@
 </script>
 
 <div class="flex flex-col h-screen align-center items-center unselectable">
-    <div class="flex-none flex flex-row justify-center w-screen flex-wrap my-4">
-        <div class="flex-none shrink-0 w-72 items-center flex-cols flex my-1">
-            <span class="mr-4 ml-1 text-xl">{num}</span>
+    <div class="flex-none flex flex-row justify-center w-screen flex-wrap mx-1">
+        <div class="flex-none shrink-0 w-72 items-center flex-cols flex">
+            <span class="mx-2 text-xl">{num}</span>
             <input class="outline-none p-1 bg-gray-200 grow mr-4 accent-gray-700 rounded-full border border-gray-700 appearance-none cursor-pointer" type="range" bind:value={num} min="3" max="8">
         </div>
-        <div class="flex-none shrink-0 w-72 items-center justify-center flex-cols flex my-1 ">
+        <div class="flex-none shrink-0 w-72 items-center justify-center mx-1 flex-cols flex">
             <button class="flex-none w-12 m-4 text-gray-700 disabled:text-gray-400 outline-none" onclick={repeat} disabled={score.length === 0}>
                 <svg class="w-12 h-12" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m16 10 3-3m0 0-3-3m3 3H5v3m3 4-3 3m0 0 3 3m-3-3h14v-3"/>
@@ -162,8 +162,8 @@
                 </svg>
             </button>
         </div>
-        <div class="flex-none w-72 shrink-0 items-center flex-cols flex my-1">
-            <button class="m-4 text-gray-700 disabled:text-gray-400 outline-none" onclick={toggleVisible} disabled={score.length === 0}>
+        <div class="flex-none w-72 shrink-0 items-center flex-cols mx-1 flex">
+            <button class="text-gray-700 disabled:text-gray-400 outline-none" onclick={toggleVisible} disabled={score.length === 0}>
                 {#if visible}
                 <svg class="w-12 h-12" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-width="2" d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6Z"/>
@@ -175,7 +175,7 @@
                 </svg>
                 {/if}
             </button>
-            <div class="flex-none my-2 w-64">{#if visible}{score.join(' ')}{/if}</div>
+            <div class="flex-none w-64">{#if visible}{score.join(' ')}{/if}</div>
         </div>
     </div>
     <div class="w-full grow bg-gray-500 p-1 flex flex-row mousetrap" >
