@@ -31,7 +31,7 @@
     let actx = null;
 
     class KeySound {
-        constructor(freq, type = 'sine', decay = 4.0, stopDecay = 0.5) {
+        constructor(freq, type = 'triangle', decay = 4.0, stopDecay = 0.5) {
             // create oscillator, gain and compressor nodes
             this.freq = freq;
             this.type = type;
