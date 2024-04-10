@@ -11,13 +11,15 @@
         }
     });
 
-    function keydown () {
+    function keydown (e) {
+        e.preventDefault();
         if (!pressed) {
             bus.dispatchEvent(name, 'pressed');
         }
     }
 
-    function keyup () {
+    function keyup (e) {
+        e.preventDefault();
         if (pressed) {
             bus.dispatchEvent(name, 'released');
         }
