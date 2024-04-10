@@ -4,6 +4,8 @@
     import { Scheduler } from './scheduler.js';
     import { Bus } from './bus.js';
     import { generate, toscore } from './generate.js';
+
+    window.addEventListener('touchmove', event => event.preventDefault(), { passive: false });
     
     const bus = new Bus();
 
@@ -143,36 +145,40 @@
 </script>
 
 <div class="flex flex-col h-screen align-center items-center unselectable">
-    <div class="flex-none flex flex-row items-center">
-        <div class="items-center w-1/8 flex-cols flex">
-            <span class="mr-4">notes: {num}</span>
-            <input class="outline-none p-1 bg-gray-200 w-48 mr-4 accent-gray-700 rounded-md border border-gray-700 appearance-none cursor-pointer" type="range" bind:value={num} min="3" max="8">
+    <div class="flex-none flex flex-row justify-center w-screen flex-wrap my-4">
+        <div class="flex-none shrink-0 w-96 items-center flex-cols flex my-1">
+            <span class="mr-4 ml-1 text-xl">{num}</span>
+            <input class="outline-none p-1 bg-gray-200 grow mr-4 accent-gray-700 rounded-full border border-gray-700 appearance-none cursor-pointer" type="range" bind:value={num} min="3" max="8">
         </div>
-        <button class="flex-none m-4 text-gray-700 disabled:text-gray-400 outline-none" onclick={repeat} disabled={score.length === 0}>
-            <svg class="w-8 h-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m16 10 3-3m0 0-3-3m3 3H5v3m3 4-3 3m0 0 3 3m-3-3h14v-3"/>
-            </svg>
-        </button>
-        <button class="flex-none m-4 text-gray-700 outline-none" onclick={play}>
-            <svg class="w-8 h-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                <path fill-rule="evenodd" d="M8.6 5.2A1 1 0 0 0 7 6v12a1 1 0 0 0 1.6.8l8-6a1 1 0 0 0 0-1.6l-8-6Z" clip-rule="evenodd"/>
-            </svg>
-        </button>
-        <button class="flex-none m-4 text-gray-700 disabled:text-gray-400 outline-none" onclick={toggleVisible} disabled={score.length === 0}>
-            {#if visible}
-            <svg class="w-8 h-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" stroke-width="2" d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6Z"/>
-                <path stroke="currentColor" stroke-width="2" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
-            </svg>
-            {:else}
-            <svg class="w-8 h-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.933 13.909A4.357 4.357 0 0 1 3 12c0-1 4-6 9-6m7.6 3.8A5.068 5.068 0 0 1 21 12c0 1-3 6-9 6-.314 0-.62-.014-.918-.04M5 19 19 5m-4 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
-            </svg>
-            {/if}
-        </button>
-        <div class="my-2 flex-auto w-64">{#if visible}{score.join(' ')}{/if}</div>
+        <div class="flex-none shrink-0 w-96 items-center justify-center flex-cols flex my-1 ">
+            <button class="flex-none w-16 m-4 text-gray-700 disabled:text-gray-400 outline-none" onclick={repeat} disabled={score.length === 0}>
+                <svg class="w-16 h-16" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m16 10 3-3m0 0-3-3m3 3H5v3m3 4-3 3m0 0 3 3m-3-3h14v-3"/>
+                </svg>
+            </button>
+            <button class="flex-none w-16 m-4 text-gray-700 outline-none" onclick={play}>
+                <svg class="w-16 h-16" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                    <path fill-rule="evenodd" d="M8.6 5.2A1 1 0 0 0 7 6v12a1 1 0 0 0 1.6.8l8-6a1 1 0 0 0 0-1.6l-8-6Z" clip-rule="evenodd"/>
+                </svg>
+            </button>
+        </div>
+        <div class="flex-none w-96 shrink-0 items-center flex-cols flex my-1">
+            <button class="m-4 text-gray-700 disabled:text-gray-400 outline-none" onclick={toggleVisible} disabled={score.length === 0}>
+                {#if visible}
+                <svg class="w-16 h-16" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-width="2" d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6Z"/>
+                    <path stroke="currentColor" stroke-width="2" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+                </svg>
+                {:else}
+                <svg class="w-16 h-16" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.933 13.909A4.357 4.357 0 0 1 3 12c0-1 4-6 9-6m7.6 3.8A5.068 5.068 0 0 1 21 12c0 1-3 6-9 6-.314 0-.62-.014-.918-.04M5 19 19 5m-4 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+                </svg>
+                {/if}
+            </button>
+            <div class="flex-none my-2 w-64">{#if visible}{score.join(' ')}{/if}</div>
+        </div>
     </div>
-    <div class="w-full flex-auto bg-gray-500 p-1 flex flex-row mousetrap" >
+    <div class="w-full grow bg-gray-500 p-1 flex flex-row mousetrap" >
         <Key name="C4" {bus} {show} />
         <Key name="D4" {bus} {show} />
         <Key name="E4" {bus} {show} />
