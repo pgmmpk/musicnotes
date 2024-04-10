@@ -9,20 +9,24 @@
     
     const bus = new Bus();
 
-    Mousetrap.bind("1", () => bus.dispatchEvent("C4", 'pressed'));
-    Mousetrap.bind("1", () => bus.dispatchEvent("C4", "released"), 'keyup');
-    Mousetrap.bind("2", () => bus.dispatchEvent("D4", 'pressed'));
-    Mousetrap.bind("2", () => bus.dispatchEvent("D4", "released"), 'keyup');
-    Mousetrap.bind("3", () => bus.dispatchEvent("E4", 'pressed'));
-    Mousetrap.bind("3", () => bus.dispatchEvent("E4", "released"), 'keyup');
-    Mousetrap.bind("4", () => bus.dispatchEvent("F4", 'pressed'));
-    Mousetrap.bind("4", () => bus.dispatchEvent("F4", "released"), 'keyup');
-    Mousetrap.bind("5", () => bus.dispatchEvent("G4", 'pressed'));
-    Mousetrap.bind("5", () => bus.dispatchEvent("G4", "released"), 'keyup');
-    Mousetrap.bind("6", () => bus.dispatchEvent("A5", 'pressed'));
-    Mousetrap.bind("6", () => bus.dispatchEvent("A5", "released"), 'keyup');
-    Mousetrap.bind("7", () => bus.dispatchEvent("B5", 'pressed'));
-    Mousetrap.bind("7", () => bus.dispatchEvent("B5", "released"), 'keyup');
+    Mousetrap.bind("1", () => bus.dispatchEvent("A3", 'pressed'));
+    Mousetrap.bind("1", () => bus.dispatchEvent("A3", "released"), 'keyup');
+    Mousetrap.bind("2", () => bus.dispatchEvent("B3", 'pressed'));
+    Mousetrap.bind("2", () => bus.dispatchEvent("B3", "released"), 'keyup');
+    Mousetrap.bind("3", () => bus.dispatchEvent("C4", 'pressed'));
+    Mousetrap.bind("3", () => bus.dispatchEvent("C4", "released"), 'keyup');
+    Mousetrap.bind("4", () => bus.dispatchEvent("D4", 'pressed'));
+    Mousetrap.bind("4", () => bus.dispatchEvent("D4", "released"), 'keyup');
+    Mousetrap.bind("5", () => bus.dispatchEvent("E4", 'pressed'));
+    Mousetrap.bind("5", () => bus.dispatchEvent("E4", "released"), 'keyup');
+    Mousetrap.bind("6", () => bus.dispatchEvent("F4", 'pressed'));
+    Mousetrap.bind("6", () => bus.dispatchEvent("F4", "released"), 'keyup');
+    Mousetrap.bind("7", () => bus.dispatchEvent("G4", 'pressed'));
+    Mousetrap.bind("7", () => bus.dispatchEvent("G4", "released"), 'keyup');
+    Mousetrap.bind("8", () => bus.dispatchEvent("A4", 'pressed'));
+    Mousetrap.bind("8", () => bus.dispatchEvent("A4", "released"), 'keyup');
+    Mousetrap.bind("9", () => bus.dispatchEvent("B4", 'pressed'));
+    Mousetrap.bind("9", () => bus.dispatchEvent("B4", "released"), 'keyup');
 
     let actx = null;
 
@@ -101,24 +105,28 @@
     }
 
     // Some musical note values:
-    const C4 = new KeySound(261.63),
+    const A3 = new KeySound(220.00),
+        B3 = new KeySound(246.94),
+        C4 = new KeySound(261.63),
         D4 = new KeySound(293.66),
         E4 = new KeySound(329.63),
         F4 = new KeySound(349.23),
         G4 = new KeySound(392),
-        A5 = new KeySound(440),
-        B5 = new KeySound(493.88),
+        A4 = new KeySound(440),
+        B4 = new KeySound(493.88),
         C5 = new KeySound(523.25),
         D5 = new KeySound(587.33),
         E5 = new KeySound(659.25);
 
+        bus.addEventListener('A3', what => A3.process(what));
+        bus.addEventListener('B3', what => B3.process(what));
         bus.addEventListener('C4', what => C4.process(what));
         bus.addEventListener('D4', what => D4.process(what));
         bus.addEventListener('E4', what => E4.process(what));
         bus.addEventListener('F4', what => F4.process(what));
         bus.addEventListener('G4', what => G4.process(what));
-        bus.addEventListener('A5', what => A5.process(what));
-        bus.addEventListener('B5', what => B5.process(what));
+        bus.addEventListener('A4', what => A4.process(what));
+        bus.addEventListener('B4', what => B4.process(what));
 
     let show = $state(true);
     let score = $state([]);
@@ -179,13 +187,15 @@
         </div>
     </div>
     <div class="w-full grow bg-gray-500 p-1 flex flex-row mousetrap" >
+        <Key name="A3" {bus} {show} />
+        <Key name="B3" {bus} {show} />
         <Key name="C4" {bus} {show} />
         <Key name="D4" {bus} {show} />
         <Key name="E4" {bus} {show} />
         <Key name="F4" {bus} {show} />
         <Key name="G4" {bus} {show} />
-        <Key name="A5" {bus} {show} />
-        <Key name="B5" {bus} {show} />
+        <Key name="A4" {bus} {show} />
+        <Key name="B4" {bus} {show} />
     </div>
 </div>
 <style>
