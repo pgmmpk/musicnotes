@@ -5,7 +5,7 @@
     import { Bus } from './bus.js';
     import { generate, toscore } from './generate.js';
 
-    window.addEventListener('touchmove', event => event.preventDefault(), { passive: false });
+    // window.addEventListener('touchmove', event => event.preventDefault(), { passive: false });
     
     const bus = new Bus();
 
@@ -31,7 +31,7 @@
     let actx = null;
 
     class KeySound {
-        constructor(freq, type = 'triangle', decay = 4.0, stopDecay = 0.5) {
+        constructor(freq, type = 'sine', decay = 4.0, stopDecay = 0.5) {
             // create oscillator, gain and compressor nodes
             this.freq = freq;
             this.type = type;
@@ -170,7 +170,7 @@
                 </svg>
             </button>
         </div>
-        <div class="flex-none w-72 shrink-0 items-center flex-cols mx-1 flex">
+        <div class="flex-none w-64 shrink-0 items-center flex-cols mx-1 flex">
             <button class="text-gray-700 disabled:text-gray-400 outline-none" onclick={toggleVisible} disabled={score.length === 0}>
                 {#if visible}
                 <svg class="w-12 h-12" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
