@@ -141,7 +141,7 @@
     }
 </script>
 
-<div class="flex flex-col h-screen align-center items-center">
+<div class="flex flex-col h-screen align-center items-center unselectable">
     <div class="flex-none flex flex-row items-center">
         <div>
             <span>notes:</span>
@@ -181,3 +181,9 @@
         <Key name="B5" {bus} {show} />
     </div>
 </div>
+<style>
+    .unselectable {
+        user-select: none;
+        -webkit-touch-callout: none;
+    }
+</style>
