@@ -1,6 +1,8 @@
 # musicnotes
 
-Tools for music ear training
+Tools for music ear training.
+
+Deployed as a static website at <https://musicnotes.kroutikov.net>
 
 ## Developing
 
