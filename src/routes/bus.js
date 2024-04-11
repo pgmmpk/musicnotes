@@ -4,7 +4,9 @@ export class Bus {
     }
 
     addEventListener (type, handler) {
-        this._bus.addEventListener (type, e => handler(e.detail));
+        const handle = e => handler(e.detail);
+        this._bus.addEventListener (type, handle);
+        return () => this._bus.removeEventListener(type, handle);
     }
 
     dispatchEvent (type, detail) {

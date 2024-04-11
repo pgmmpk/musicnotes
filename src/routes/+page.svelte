@@ -1,161 +1,71 @@
 <script>
     import Mousetrap from "mousetrap";
-    import Key from "./Key.svelte";
-    import BlackKey from "./BlackKey.svelte";
+    import KeySet from "./KeySet.svelte";
     import { Scheduler } from './scheduler.js';
     import { Bus } from './bus.js';
     import { generate, toscore } from './generate.js';
+    import { findBounds, keyboard } from "./keyboard.js";
+    import { settings } from './settings.svelte.js';
+    import SettingsPanel from "./SettingsPanel.svelte";
+    
 
     // window.addEventListener('touchmove', event => event.preventDefault(), { passive: false });
     
     const bus = new Bus();
+    const keys = $derived(findBounds(settings.key, 10));
+    const keyRange = $derived({
+        from: keys[0],
+        to:   keys[keys.length - 1],
+    });
 
-    Mousetrap.bind("1", () => bus.dispatchEvent("A3", 'pressed'));
-    Mousetrap.bind("1", () => bus.dispatchEvent("A3", "released"), 'keyup');
-    Mousetrap.bind("2", () => bus.dispatchEvent("B3", 'pressed'));
-    Mousetrap.bind("2", () => bus.dispatchEvent("B3", "released"), 'keyup');
-    Mousetrap.bind("3", () => bus.dispatchEvent("C4", 'pressed'));
-    Mousetrap.bind("3", () => bus.dispatchEvent("C4", "released"), 'keyup');
-    Mousetrap.bind("4", () => bus.dispatchEvent("D4", 'pressed'));
-    Mousetrap.bind("4", () => bus.dispatchEvent("D4", "released"), 'keyup');
-    Mousetrap.bind("5", () => bus.dispatchEvent("E4", 'pressed'));
-    Mousetrap.bind("5", () => bus.dispatchEvent("E4", "released"), 'keyup');
-    Mousetrap.bind("6", () => bus.dispatchEvent("F4", 'pressed'));
-    Mousetrap.bind("6", () => bus.dispatchEvent("F4", "released"), 'keyup');
-    Mousetrap.bind("7", () => bus.dispatchEvent("G4", 'pressed'));
-    Mousetrap.bind("7", () => bus.dispatchEvent("G4", "released"), 'keyup');
-    Mousetrap.bind("8", () => bus.dispatchEvent("A4", 'pressed'));
-    Mousetrap.bind("8", () => bus.dispatchEvent("A4", "released"), 'keyup');
-    Mousetrap.bind("9", () => bus.dispatchEvent("B4", 'pressed'));
-    Mousetrap.bind("9", () => bus.dispatchEvent("B4", "released"), 'keyup');
-
-    let actx = null;
-
-    class KeySound {
-        constructor(freq, type = 'triangle', decay = 4.0, stopDecay = 0.5) {
-            // create oscillator, gain and compressor nodes
-            this.freq = freq;
-            this.type = type;
-            this.decay = decay;
-            this.stopDecay = stopDecay;
-            this.osc = null;
-            this.vol = null;
-            this.isKeyDown = false;
+    $effect(() => {
+        settings;
+        const releases = [];
+        let button = 0;
+        for (const key of keys) {
+            button += 1;
+            if (button === 10) button = 0;
+            Mousetrap.bind('' + button, () => bus.dispatchEvent(key, 'pressed'));
+            Mousetrap.bind('' + button, () => bus.dispatchEvent(key, 'released'), 'keyup');
+            releases.push(['' + button]);
+            releases.push(['' + button, 'keyup']);
         }
 
-        pressed () {
-            if (this.isKeyDown || this.osc !== null || this.vol !== null) {
-                return;
+        return () => {
+            for (const x of releases) {
+                Mousetrap.unbind(...x);
             }
-            this.isKeyDown = true;
-            if (actx === null) {
-                actx = new AudioContext();
-            }
-            const osc = actx.createOscillator();
-            const vol = actx.createGain();
+        };
+    });
 
-            // set the supplied values
-            osc.frequency.value = this.freq;
-            osc.type = this.type;
-
-            // set the volume value so that we do not overload the destination
-            // when multiple voices are played simmultaneously
-            vol.gain.setValueAtTime(0.1, actx.currentTime);
-            // Finally this schedules the fade out.
-            vol.gain.exponentialRampToValueAtTime(
-                0.0001,
-                actx.currentTime + this.decay,
-            );
-            osc.connect(vol).connect(actx.destination);
-
-            osc.start(actx.currentTime);
-            osc.stop(actx.currentTime + this.decay);
-            osc.addEventListener('ended', () => {
-                if (this.osc === osc && this.vol === vol) {
-                    this.osc = null;
-                    this.vol = null;
-                }
-            });
-
-            this.osc = osc;
-            this.vol = vol;
-        }
-
-        released () {
-            this.isKeyDown = false;
-            if (this.osc === null || this.vol === null) {
-                return;
-            }
-            this.vol.gain.setValueAtTime(Math.min(0.1, this.vol.gain.value), actx.currentTime);
-            this.vol.gain.exponentialRampToValueAtTime(
-                0.0001,
-                actx.currentTime + this.stopDecay,
-            );
-            this.osc.stop(actx.currentTime + this.stopDecay);
-            this.osc = null;
-            this.vol = null;
-        }
-
-        process (what) {
-            if (what === 'pressed') {
-                this.pressed();
-            } else {
-                this.released();
-            }
-        }
+    function test () {
+        settings.key = 'D4';
     }
-
-    // Some musical note values:
-    const a3 = new KeySound(207.70),
-        A3 = new KeySound(220.00),
-        b3 = new KeySound(233.10),
-        B3 = new KeySound(246.94),
-        C4 = new KeySound(261.63),
-        d4 = new KeySound(277.2),
-        D4 = new KeySound(293.66),
-        e4 = new KeySound(311.1),
-        E4 = new KeySound(329.63),
-        F4 = new KeySound(349.23),
-        g4 = new KeySound(370.0),
-        G4 = new KeySound(392),
-        a4 = new KeySound(415.3),
-        A4 = new KeySound(440),
-        b4 = new KeySound(466.2),
-        B4 = new KeySound(493.88),
-        C5 = new KeySound(523.25),
-        D5 = new KeySound(587.33),
-        E5 = new KeySound(659.25);
-
-        bus.addEventListener('a3', what => a3.process(what));
-        bus.addEventListener('A3', what => A3.process(what));
-        bus.addEventListener('b3', what => b3.process(what));
-        bus.addEventListener('B3', what => B3.process(what));
-        bus.addEventListener('C4', what => C4.process(what));
-        bus.addEventListener('d4', what => d4.process(what));
-        bus.addEventListener('D4', what => D4.process(what));
-        bus.addEventListener('e4', what => e4.process(what));
-        bus.addEventListener('E4', what => E4.process(what));
-        bus.addEventListener('F4', what => F4.process(what));
-        bus.addEventListener('g4', what => g4.process(what));
-        bus.addEventListener('G4', what => G4.process(what));
-        bus.addEventListener('a4', what => a4.process(what));
-        bus.addEventListener('A4', what => A4.process(what));
-        bus.addEventListener('b4', what => b4.process(what));
-        bus.addEventListener('B4', what => B4.process(what));
 
     let show = $state(true);
     let score = $state([]);
     let visible = $state(false);
-    let num = $state(4);
     const beat = 750;
 
-    async function play () {
-        visible = false;
-        score = generate({ num });
-        await repeat();
+    async function generateAndPlay () {
+        const notes = Object.keys(keyboard);
+        const start = notes.indexOf(settings.key);
+        const keys = [];
+        if (settings.major) {
+            keys.push(
+                notes[start], notes[start+2], notes[start+2], notes[start+4],
+            )
+        } else {
+            keys.push(
+                notes[start], notes[start+2], notes[start+2], notes[start+3],
+            )
+        }
+
+        score = generate({ num: settings.numNotes, keys });
+        await play();
     }
     
-    async function repeat () {
+    async function play () {
         show = visible;
         const scheduler = new Scheduler(score.map(x=>toscore(x)), { beat });
         await scheduler.play(bus);
@@ -165,28 +75,42 @@
     function toggleVisible () {
         visible = !visible;
     }
+
+    let settingsVisible = $state(false);
 </script>
 
-<div class="flex flex-col h-screen align-center items-center unselectable">
+<div class="flex flex-col h-screen align-center items-center unselectable mousetrap">
     <div class="flex-none flex flex-row justify-center w-screen flex-wrap mx-1">
-        <div class="flex-none shrink-0 w-64 items-center flex-cols flex">
-            <span class="mx-2 text-xl">{num}</span>
-            <input class="outline-none p-1 bg-gray-200 grow mr-4 accent-gray-700 rounded-full border border-gray-700 appearance-none cursor-pointer" type="range" bind:value={num} min="3" max="8">
+        <div class="flex-none">
+            <button class="w-12 m-4 text-gray-700 disabled:text-gray-400 outline-none" onclick={() => { settingsVisible = true; }} >
+                <svg class="w-12 h-12 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M5 7h14M5 12h14M5 17h14"/>
+                </svg>
+            </button>
         </div>
-        <div class="flex-none shrink-0 w-64 items-center justify-center mx-1 flex-cols flex">
-            <button class="flex-none w-12 m-4 text-gray-700 disabled:text-gray-400 outline-none" onclick={repeat} disabled={score.length === 0}>
+        <div class="flex-none shrink-0 items-center flex-cols mx-1 flex">
+            <div class="flex-none w-32 text-lg text-center">
+                {settings.key}
+                {settings.major ? 'major' : 'minor'}
+                x{settings.numNotes}
+            </div>
+        </div>
+        <div class="flex-1 shrink-0 flex flex-row justify-center">
+            <button class="flex-none w-12 m-4 text-gray-700 disabled:text-gray-400 outline-none" onclick={play} disabled={score.length === 0}>
                 <svg class="w-12 h-12" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m16 10 3-3m0 0-3-3m3 3H5v3m3 4-3 3m0 0 3 3m-3-3h14v-3"/>
                 </svg>
             </button>
-            <button class="flex-none w-12 m-4 text-gray-700 outline-none" onclick={play}>
+        </div>
+        <div class="flex-1 shrink-0 flex flex-row justify-center">
+            <button class="w-12 m-4 text-gray-700 outline-none" onclick={generateAndPlay}>
                 <svg class="w-12 h-12" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                     <path fill-rule="evenodd" d="M8.6 5.2A1 1 0 0 0 7 6v12a1 1 0 0 0 1.6.8l8-6a1 1 0 0 0 0-1.6l-8-6Z" clip-rule="evenodd"/>
                 </svg>
             </button>
         </div>
-        <div class="flex-none w-64 shrink-0 items-center flex-cols mx-1 flex">
-            <button class="text-gray-700 disabled:text-gray-400 outline-none" onclick={toggleVisible} disabled={score.length === 0}>
+        <div class="flex-1 shrink-0 flex flex-row justify-center">
+            <button class="w-12 m-4 text-gray-700 disabled:text-gray-400 outline-none" onclick={toggleVisible}>
                 {#if visible}
                 <svg class="w-12 h-12" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-width="2" d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6Z"/>
@@ -198,28 +122,16 @@
                 </svg>
                 {/if}
             </button>
-            <div class="flex-none w-64">{#if visible}{score.join(' ')}{/if}</div>
+        </div>
+        <div class="flex-none shrink-0 items-center flex-cols mx-1 flex">
+            <div class="flex-none w-64 text-lg text-center">{#if visible}{score.join(' ')}{/if}</div>
         </div>
     </div>
-    <div class="w-full grow bg-gray-500 p-1 flex flex-row mousetrap" >
-        <BlackKey name="a3" {bus} {show} />
-        <Key name="A3" {bus} {show} />
-        <BlackKey name="b3" {bus} {show} />
-        <Key name="B3" {bus} {show} />
-        <Key name="C4" {bus} {show} />
-        <BlackKey name="d4" {bus} {show} />
-        <Key name="D4" {bus} {show} />
-        <BlackKey name="e4" {bus} {show} />
-        <Key name="E4" {bus} {show} />
-        <Key name="F4" {bus} {show} />
-        <BlackKey name="g4" {bus} {show} />
-        <Key name="G4" {bus} {show} />
-        <BlackKey name="a4" {bus} {show} />
-        <Key name="A4" {bus} {show} />
-        <BlackKey name="b4" {bus} {show} />
-        <Key name="B4" {bus} {show} />
+    <div class="w-full grow bg-gray-500 p-1" >
+        <KeySet {bus} {show} {...keyRange} />
     </div>
 </div>
+<SettingsPanel bind:visible={settingsVisible} />
 <style>
     .unselectable {
         user-select: none;

@@ -3,26 +3,28 @@
 
     let pressed = $state(false);
 
-    bus.addEventListener (name, what => {
-        if (what === 'pressed') {
-            pressed = true;
-        } else {
-            pressed = false;
-        }
+    $effect.pre(() => {
+        return bus.addEventListener (name, what => {
+            if (what === 'pressed') {
+                pressed = true;
+            } else {
+                pressed = false;
+            }
+        });
     });
 
     function keydown (e) {
-        e.preventDefault();
         if (!pressed) {
             bus.dispatchEvent(name, 'pressed');
         }
+        return false;
     }
 
     function keyup (e) {
-        e.preventDefault();
         if (pressed) {
             bus.dispatchEvent(name, 'released');
         }
+        return false;
     }
 </script>
 
