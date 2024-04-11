@@ -2,6 +2,13 @@
     import { settings } from './settings.svelte.js';
     import { keyboard } from './keyboard.js';
 
+    const voices = [
+        'triangle',
+        'sine',
+        'sawtooth',
+        'square',
+    ];
+
     let { visible = $bindable() } = $props();
 </script>
 {#if visible}
@@ -33,6 +40,13 @@
             <input class="outline-none p-1 bg-gray-200 grow mr-4 accent-gray-700 rounded-full border border-gray-700 appearance-none cursor-pointer" type="range" bind:value={settings.numNotes} min="3" max="8">
             <span class="mx-2 text-xl">{settings.numNotes}</span>
         </div>
+    </div>
+    <div class="flex flex-row items-center m-2 ml-4">
+        <select bind:value={settings.voice} class="bg-gray-50 border border-gray-700 text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-48 p-2.5 ">
+            {#each voices as v (v)}
+                <option selected={settings.voice == v} value={v}>{v}</option>
+            {/each}
+        </select>
     </div>
 </div>
 {/if}

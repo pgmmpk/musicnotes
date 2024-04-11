@@ -38,10 +38,6 @@
         };
     });
 
-    function test () {
-        settings.key = 'D4';
-    }
-
     let show = $state(true);
     let score = $state([]);
     let visible = $state(false);
@@ -128,7 +124,7 @@
         </div>
     </div>
     <div class="w-full grow bg-gray-500 p-1" >
-        <KeySet {bus} {show} {...keyRange} />
+        <KeySet {bus} {show} voice={settings.voice} {...keyRange} />
     </div>
 </div>
 <SettingsPanel bind:visible={settingsVisible} />

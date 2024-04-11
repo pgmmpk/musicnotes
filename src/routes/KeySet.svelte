@@ -3,10 +3,9 @@
     import BlackKey from './BlackKey.svelte';
     import { init as initKeyboard, keyboard } from './keyboard.js';
 
-    const { bus, show, from = 'A3', to = 'E5' } = $props();
+    const { bus, show, voice = 'triangle', from = 'A3', to = 'E5' } = $props();
 
     const showing = $derived.by(() => {
-        console.log('derived', { from, to });
         const notes = Object.keys(keyboard);
         let startIndex = 0;
         let endIndex = notes.length;
@@ -34,7 +33,7 @@
         return showing;
     });
 
-    $effect(() => initKeyboard(bus));
+    $effect(() => initKeyboard(bus, voice));
 
 </script>
 <div class="h-full w-full flex flex-row">
