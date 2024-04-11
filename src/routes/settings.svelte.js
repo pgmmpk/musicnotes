@@ -8,7 +8,7 @@ class Settings {
     constructor () {
         const saved = localStorage.getItem('settings');
         if (saved) {
-            const { key, major, numNotes, voice = 'trianle' } = JSON.parse(saved);
+            const { key, major, numNotes, voice = 'triangle' } = JSON.parse(saved);
             this._key = key;
             this._major = major;
             this._numNotes = numNotes;
