@@ -72,9 +72,6 @@
     }
 
     let guesses = $state([
-        { key: 'E4', major: false, },
-        { key: 'E4', major: false, opened: true, },
-        { key: 'E4', major: false, },
     ]);
     let allOpened = $derived(guesses.reduce((prev, curr) => prev && curr.opened, true));
     async function playPentascale () {
