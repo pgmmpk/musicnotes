@@ -52,13 +52,5 @@
             <span class="mx-2 text-xl">{settings.numNotes}</span>
         </div>
     </div>
-    <div class="flex flex-row items-center m-2 ml-4">
-        <span class="flex-2 mx-2">Pentascale:</span>
-        <select bind:value={settings.key} class="flex-1 bg-gray-50 border mx-4 border-gray-700 text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-16 p-2.5 ">
-            {#each notes.slice(0, notes.length - 7) as k (k)}
-                <option selected={k===settings.key} value={k}>{k}</option>
-            {/each}
-        </select>
-    </div>
 </div>
 {/if}

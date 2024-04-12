@@ -162,7 +162,9 @@
                     <button class="m-2 border rounded px-2 py-1 hover:bg-gray-200 disabled:text-gray-200 disabled:cursor-default disabled:bg-white" disabled={guess.opened} onclick={() => guessed(guess, false)}>Minor</button>
                     <div class:bg-gray-500={!guess.opened} class:text-gray-500={!guess.opened} class:text-red-700={guess.opened && !guess.result} class:text-green-700={guess.opened && guess.result} class="m-2 rounded">{guess.key} {guess.major ? 'Major' : 'Minor'}</div>
                     <button class="m-2" onclick={() => replay(guess)}>
-                        Repeat
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8">
+                            <path fill-rule="evenodd" d="M4.755 10.059a7.5 7.5 0 0 1 12.548-3.364l1.903 1.903h-3.183a.75.75 0 1 0 0 1.5h4.992a.75.75 0 0 0 .75-.75V4.356a.75.75 0 0 0-1.5 0v3.18l-1.9-1.9A9 9 0 0 0 3.306 9.67a.75.75 0 1 0 1.45.388Zm15.408 3.352a.75.75 0 0 0-.919.53 7.5 7.5 0 0 1-12.548 3.364l-1.902-1.903h3.183a.75.75 0 0 0 0-1.5H2.984a.75.75 0 0 0-.75.75v4.992a.75.75 0 0 0 1.5 0v-3.18l1.9 1.9a9 9 0 0 0 15.059-4.035.75.75 0 0 0-.53-.918Z" clip-rule="evenodd" />
+                        </svg>
                     </button>
                 </div>
             {/each}
