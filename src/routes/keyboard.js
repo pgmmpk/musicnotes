@@ -2,11 +2,12 @@
 let actx = null;
 
 class KeySound {
-    constructor(freq, type = 'triangle', decay = 4.0, stopDecay = 0.5) {
+    constructor(freq, type = 'triangle', decay = 4.0, stopDecay = 0.5, volume = 0.3) {
         // create oscillator, gain and compressor nodes
         this.freq = freq;
         this.type = type;
         this.decay = decay;
+        this.volume = volume;
         this.stopDecay = stopDecay;
         this.osc = null;
         this.vol = null;
@@ -31,7 +32,7 @@ class KeySound {
 
         // set the volume value so that we do not overload the destination
         // when multiple voices are played simmultaneously
-        vol.gain.setValueAtTime(0.1, actx.currentTime);
+        vol.gain.setValueAtTime(this.volume, actx.currentTime);
         // Finally this schedules the fade out.
         vol.gain.exponentialRampToValueAtTime(
             0.0001,
@@ -57,7 +58,7 @@ class KeySound {
         if (this.osc === null || this.vol === null) {
             return;
         }
-        this.vol.gain.setValueAtTime(Math.min(0.1, this.vol.gain.value), actx.currentTime);
+        this.vol.gain.setValueAtTime(Math.min(this.volume, this.vol.gain.value), actx.currentTime);
         this.vol.gain.exponentialRampToValueAtTime(
             0.0001,
             actx.currentTime + this.stopDecay,
