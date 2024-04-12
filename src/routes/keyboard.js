@@ -188,6 +188,7 @@ export const keyboard = {
     e8: 4978.03,
 };
 
+export const notes = Object.keys(keyboard);
 
 export function init (bus, type = 'sine') {
     const releases = [];
@@ -207,7 +208,7 @@ export function init (bus, type = 'sine') {
 
 export function findBounds (middleKey, count) {
     // utility that finds start and end white key given the middleKey and count of white keys to show
-    const whiteKeys = Object.keys(keyboard).filter(key => key.toLowerCase() !== key);
+    const whiteKeys = notes.filter(key => key.toLowerCase() !== key);
     const middleIndex = whiteKeys.indexOf(middleKey.toUpperCase());
     if (middleIndex < 0) {
         throw new Error('Middle key not found: ' + middleKey);

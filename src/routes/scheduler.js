@@ -43,8 +43,6 @@ export class Scheduler {
         let now = this.timeline[0].time;
         const pressed = new Set();
 
-        console.log(this.timeline)
-
         for ( const { what, time, note } of this.timeline) {
             if (time > now) {
                 await sleep(time - now);

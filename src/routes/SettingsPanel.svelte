@@ -1,6 +1,9 @@
 <script>
+    import { fly } from 'svelte/transition';
+	import { quintOut } from 'svelte/easing';
+
     import { settings } from './settings.svelte.js';
-    import { keyboard } from './keyboard.js';
+    import { notes } from './keyboard.js';
 
     const voices = [
         'triangle',
@@ -12,39 +15,48 @@
     let { visible = $bindable() } = $props();
 </script>
 {#if visible}
-<div class="h-screen absolute top-0 left-0 w-2/3 border bg-white border-gray-700 z-2 flex flex-col">
+<div class="h-screen absolute top-0 left-0 w-2/3 border bg-white border-gray-700 z-2 flex flex-col" transition:fly={{ duration: 400, opacity: 1.0, x: '-100%' }}>
     <div class="flex flex-row">
         <div class="grow"></div>
-        <div class="flex-none m-1 w-12">
-            <svg class="w-12 h-12 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"
-                onclick={() => {visible = false; }}
-            >
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 9-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
-            </svg>
-        </div>
+        <button class="flex-none m-2 w-8" onclick={() => {visible = false;}}>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+        </svg>
+    </button>
     </div>
     <div class="flex flex-row items-center m-2 ml-4">
-        <select bind:value={settings.key} class="bg-gray-50 border mx-4 border-gray-700 text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-16 p-2.5 ">
-            {#each Object.keys(keyboard).slice() as k (k)}
+        <span class="mx-2 flex-2">Voice: </span>
+        <select bind:value={settings.voice} class="flex-1 bg-gray-50 border border-gray-700 text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-48 p-2.5 ">
+            {#each voices as v (v)}
+                <option selected={settings.voice == v} value={v}>{v}</option>
+            {/each}
+        </select>
+    </div>
+    <div class="flex flex-row items-center m-2 ml-4">
+        <span class="mx-2 flex-2">Triplet: </span>
+        <select bind:value={settings.key} class="flex-1 bg-gray-50 border mx-4 border-gray-700 text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-16 p-2.5 ">
+            {#each notes.slice(0, notes.length - 4) as k (k)}
                 <option selected={k===settings.key} value={k}>{k}</option>
             {/each}
         </select>
     
-        <select bind:value={settings.major} class="bg-gray-50 border border-gray-700 text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-48 p-2.5 ">
+        <select bind:value={settings.major} class="flex-1 bg-gray-50 border border-gray-700 text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-48 p-2.5 ">
             <option selected={settings.major} value={true}>major</option>
             <option selected={!settings.major} value={false}>minor</option>
         </select>
     </div>
-    <div>
-        <div class="mx-4 flex-none shrink-0 w-64 items-center flex-cols flex">
+    <div class="flex flex-row items-center m-2 ml-4">
+        <span class="mx-2 flex-2">Notes: </span>
+        <div class="mx-4 shrink-0 items-center flex-cols flex flex-1">
             <input class="outline-none p-1 bg-gray-200 grow mr-4 accent-gray-700 rounded-full border border-gray-700 appearance-none cursor-pointer" type="range" bind:value={settings.numNotes} min="3" max="8">
             <span class="mx-2 text-xl">{settings.numNotes}</span>
         </div>
     </div>
     <div class="flex flex-row items-center m-2 ml-4">
-        <select bind:value={settings.voice} class="bg-gray-50 border border-gray-700 text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-48 p-2.5 ">
-            {#each voices as v (v)}
-                <option selected={settings.voice == v} value={v}>{v}</option>
+        <span class="flex-2 mx-2">Pentascale:</span>
+        <select bind:value={settings.key} class="flex-1 bg-gray-50 border mx-4 border-gray-700 text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-16 p-2.5 ">
+            {#each notes.slice(0, notes.length - 7) as k (k)}
+                <option selected={k===settings.key} value={k}>{k}</option>
             {/each}
         </select>
     </div>

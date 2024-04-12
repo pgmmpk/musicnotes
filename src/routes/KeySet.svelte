@@ -1,12 +1,11 @@
 <script>
     import Key from './Key.svelte';
     import BlackKey from './BlackKey.svelte';
-    import { init as initKeyboard, keyboard } from './keyboard.js';
+    import { init as initKeyboard, notes } from './keyboard.js';
 
     const { bus, show, voice = 'triangle', from = 'A3', to = 'E5' } = $props();
 
     const showing = $derived.by(() => {
-        const notes = Object.keys(keyboard);
         let startIndex = 0;
         let endIndex = notes.length;
         for (let i = 0; i < notes.length; i++) {
