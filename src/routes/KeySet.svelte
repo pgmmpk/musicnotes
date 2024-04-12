@@ -1,9 +1,9 @@
 <script>
     import Key from './Key.svelte';
     import BlackKey from './BlackKey.svelte';
-    import { init as initKeyboard, notes } from './keyboard.js';
+    import { notes } from './keyboard.js';
 
-    const { bus, show, voice = 'triangle', from = 'A3', to = 'E5' } = $props();
+    const { bus, show, from = 'A3', to = 'E5' } = $props();
 
     const showing = $derived.by(() => {
         let startIndex = 0;
@@ -31,9 +31,6 @@
 
         return showing;
     });
-
-    $effect(() => initKeyboard(bus, voice));
-
 </script>
 <div class="h-full w-full flex flex-row">
     {#each showing as key (key)}

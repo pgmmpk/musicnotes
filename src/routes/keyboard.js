@@ -1,3 +1,6 @@
+import { Bus } from './bus.js';
+
+export const bus = new Bus();
 
 let actx = null;
 

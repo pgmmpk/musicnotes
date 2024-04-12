@@ -2,16 +2,16 @@
     import Mousetrap from "mousetrap";
     import KeySet from "./KeySet.svelte";
     import { Scheduler } from './scheduler.js';
-    import { Bus } from './bus.js';
     import { generate, toscore, pentascale, choose } from './generate.js';
-    import { findBounds, notes } from "./keyboard.js";
+    import { findBounds, notes, bus, init as initKeyboard } from "./keyboard.js";
     import { settings } from './settings.svelte.js';
-    import SettingsPanel from "./SettingsPanel.svelte";
+    import { chooser } from './chooser.svelte.js';
+    import Layout from "./Layout.svelte";
     
 
     // window.addEventListener('touchmove', event => event.preventDefault(), { passive: false });
-    
-    const bus = new Bus();
+    $effect(() => initKeyboard(bus, settings.voice));
+
     const keys = $derived(findBounds(settings.key, 10));
     const keyRange = $derived({
         from: keys[0],
@@ -71,34 +71,40 @@
         visible = !visible;
     }
 
-    let settingsVisible = $state(false);
-
+    let guesses = $state([
+        { key: 'E4', major: false, },
+        { key: 'E4', major: false, opened: true, },
+        { key: 'E4', major: false, },
+    ]);
+    let allOpened = $derived(guesses.reduce((prev, curr) => prev && curr.opened, true));
     async function playPentascale () {
         const c4index = notes.indexOf('C4')
         const key = choose(notes.slice(c4index-10, c4index+10));
         const major = choose([true, false]);
+        guesses = [{
+            key, major, opened: false,
+        }, ...guesses];
+        if (guesses.length > 10) {
+            guesses.pop();
+        }
+        await replay({key, major});
+    }
+
+    async function replay ({key, major}) {
         const score = pentascale({ key, major, lengths: [''] });
-        console.log({key, major})
         const scheduler = new Scheduler(score, { beat: beat * 0.5 });
         await scheduler.play(bus);
     }
 
-    let chooserVisible = $state(false);
-    function chooseGame () {
-        settingsVisible = false;
-        chooserVisible = true;
+    function guessed(guess, what) {
+        guess.opened = true;
+        guess.result = guess.major === what;
     }
 </script>
 
-<div class="flex flex-col h-screen align-center items-center unselectable mousetrap">
-    <div class="flex-none flex flex-row justify-center w-screen flex-wrap mx-1">
-        <div class="flex-none">
-            <button class="w-8 m-2 text-gray-700 disabled:text-gray-400 outline-none" onclick={() => { settingsVisible = true; }} >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-            </svg>
-            </button>
-        </div>
+<Layout>
+    <div slot="header" class="w-full flex flex-row">
+        {#if chooser.choice === 'ear-training'}
         <div class="flex-none shrink-0 items-center flex-cols mx-1 flex">
             <div class="flex-none w-32 text-lg text-center">
                 {settings.key}
@@ -134,29 +140,35 @@
                 {/if}
             </button>
         </div>
-        <div class="flex-1 shrink-0 flex flex-row justify-end">
-            <!-- <button class="w-8 m-2 text-gray-700 disabled:text-gray-400 outline-none" onclick={playPentascale}>Test</button> -->
-            <button class="w-8 text-gray-700 disabled:text-gray-400 outline-none" onclick={chooseGame}>
-                <!-- <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                </svg> -->
+        {:else if chooser.choice === 'major-or-minor'}
+        <div class="flex-1 shrink-0 flex flex-row justify-center">
+            <button class="w-8 m-2 text-gray-700 disabled:text-gray-400 outline-none" disabled={!allOpened} onclick={playPentascale}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" />
                 </svg>
             </button>
         </div>
-    </div>
-    <div class="flex-none items-center flex-cols flex">
-        <div class="flex-none w-64 text-lg text-center">{#if visible}{score.join(' ')}{/if}</div>
-    </div>
-    <div class="w-full grow bg-gray-500 p-1" >
-        <KeySet {bus} {show} voice={settings.voice} {...keyRange} />
-    </div>
-</div>
-<SettingsPanel bind:visible={settingsVisible} />
-<style>
-    .unselectable {
-        user-select: none;
-        -webkit-touch-callout: none;
-    }
-</style>
+        {/if}
+    </div> 
+    <div class="w-screen h-full grow flex flex-col">
+        {#if chooser.choice === 'ear-training'}
+        <div class="flex-none items-center flex-cols flex justify-center">
+            <div class="flex-none w-64 text-lg text-center">{#if visible}{score.join(' ')}{/if}</div>
+        </div>
+        <div class="w-full grow bg-gray-500 p-1" >
+            <KeySet {bus} {show} voice={settings.voice} {...keyRange} />
+        </div>
+        {:else if chooser.choice === 'major-or-minor'}
+            {#each guesses as guess}
+                <div class="flex flex-row items-center justify-center">
+                    <button class="m-2 border rounded px-2 py-1 hover:bg-gray-200 disabled:text-gray-200 disabled:cursor-default disabled:bg-white" disabled={guess.opened} onclick={() => guessed(guess, true)}>Major</button>
+                    <button class="m-2 border rounded px-2 py-1 hover:bg-gray-200 disabled:text-gray-200 disabled:cursor-default disabled:bg-white" disabled={guess.opened} onclick={() => guessed(guess, false)}>Minor</button>
+                    <div class:bg-gray-500={!guess.opened} class:text-gray-500={!guess.opened} class:text-red-700={guess.opened && !guess.result} class:text-green-700={guess.opened && guess.result} class="m-2 rounded">{guess.key} {guess.major ? 'Major' : 'Minor'}</div>
+                    <button class="m-2" onclick={() => replay(guess)}>
+                        Repeat
+                    </button>
+                </div>
+            {/each}
+        {/if}
+    </div>    
+</Layout>
