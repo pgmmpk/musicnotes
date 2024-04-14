@@ -75,21 +75,27 @@
     ]);
     let allOpened = $derived(guesses.reduce((prev, curr) => prev && curr.opened, true));
     async function playPentascale () {
-        const c4index = notes.indexOf('C4')
-        const key = choose(notes.slice(c4index-10, c4index+10));
+        const fromIndex = notes.indexOf(settings.fromPentascale);
+        const toIndex = notes.indexOf(settings.toPentascale);
+        const key = choose(notes.slice(fromIndex, toIndex + 1));
         const major = choose([true, false]);
+        if (guesses.length > 0 && guesses[0].key === key && guesses[0].major === major) {
+            // avoid same twice in a row
+            return await playPentascale ();
+        }
+        const b = beat * (Math.random() * 0.4 + 0.6);
         guesses = [{
-            key, major, opened: false,
+            key, major, opened: false, beat: b,
         }, ...guesses];
         if (guesses.length > 10) {
             guesses.pop();
         }
-        await replay({key, major});
+        await replay({key, major, beat: b});
     }
 
-    async function replay ({key, major}) {
+    async function replay ({key, major, beat}) {
         const score = pentascale({ key, major, lengths: [''] });
-        const scheduler = new Scheduler(score, { beat: beat * 0.5 });
+        const scheduler = new Scheduler(score, { beat: beat * 0.6 });
         await scheduler.play(bus);
     }
 
