@@ -3,7 +3,7 @@ class Settings {
     _key = $state('C4');
     _major = $state(true);
     _numNotes = $state(4);
-    _voice = $state('triangle');
+    _voice = $state('piano');
 
     constructor () {
         const saved = localStorage.getItem('settings');

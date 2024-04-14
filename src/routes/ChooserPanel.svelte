@@ -10,7 +10,7 @@
     let { visible = $bindable() } = $props();
 </script>
 {#if visible}
-<div class="h-screen absolute top-0 right-0 w-2/3 border bg-white border-gray-700 z-2 flex flex-col" transition:fly={{ duration: 400, opacity: 1.0, x: '200%' }}>
+<div class="h-screen absolute top-0 right-0 w-2/3 border bg-white border-gray-700 z-2 flex flex-col shadow-xl shadow-gray-700" transition:fly={{ duration: 400, opacity: 1.0, x: '200%' }}>
     <div class="flex flex-row">
         <div class="grow"></div>
         <button class="flex-none m-2 w-8" onclick={() => {visible = false;}}>

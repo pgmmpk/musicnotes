@@ -1,6 +1,19 @@
 import { Bus } from './bus.js';
+import * as waveforms from './waveforms/index.js';
 
 export const bus = new Bus();
+
+export const SIMPLE_WAVEFORMS = [
+    'triangle',
+    'sine',
+    'sawtooth',
+    'square',
+];
+
+export const voices = [
+    ...Object.keys(waveforms),
+    ...SIMPLE_WAVEFORMS,
+]
 
 let actx = null;
 
@@ -27,11 +40,15 @@ class KeySound {
         }
         this.isKeyDown = true;
         const osc = actx.createOscillator();
-        const vol = actx.createGain();
 
-        // set the supplied values
         osc.frequency.value = this.freq;
-        osc.type = this.type;
+        if (this.wave) {
+            osc.setPeriodicWave(this.wave);
+        } else {
+            osc.type = this.type;
+        }
+
+        const vol = actx.createGain();
 
         // set the volume value so that we do not overload the destination
         // when multiple voices are played simmultaneously
@@ -77,6 +94,21 @@ class KeySound {
         } else {
             this.released();
         }
+    }
+
+    get wave() {
+        if (SIMPLE_WAVEFORMS.indexOf(this.type) >= 0) {
+            return null;
+        }
+
+        if (waveforms[this.type] === undefined) {
+            throw new Error('Unknown waveform: ', this.type);
+        }
+        const { real, imag } = waveforms[this.type];
+        if (real === undefined || imag === undefined) {
+            throw new Error('Corrupted waveform: ' + this.type);
+        }
+        return actx.createPeriodicWave(real, imag, { disableNormalization: false });
     }
 }
 
